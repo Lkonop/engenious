@@ -1,0 +1,12 @@
+node_modules/
+cypress-realworld-app/node_modules/
+myportfolio/node_modules/
+playwright-tests/node_modules/
+allure-results/
+allure-report/
+test-results/
+playwright-report/
+.DS_Store
+RECRUITMENT_SOLUTION.md
+AGENTS.md
+Web Automation Assessment.pdf

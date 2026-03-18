@@ -1,0 +1,24 @@
+--- node_modules/buffer-equal-constant-time/index.js
++++ node_modules/buffer-equal-constant-time/index.js
+@@ -31,3 +31,6 @@
+-bufferEq.install = function() {
+-  Buffer.prototype.equal = SlowBuffer.prototype.equal = function equal(that) {
+-    return bufferEq(this, that);
+-  };
+-};
++bufferEq.install = function() {
++  Buffer.prototype.equal = function equal(that) {
++    return bufferEq(this, that);
++  };
++  if (typeof SlowBuffer !== "undefined") {
++    SlowBuffer.prototype.equal = Buffer.prototype.equal;
++  }
++};
+@@ -37,1 +40,1 @@
+-var origSlowBufEqual = SlowBuffer.prototype.equal;
++var origSlowBufEqual = (typeof SlowBuffer !== "undefined") ? SlowBuffer.prototype.equal : undefined;
+@@ -40,1 +43,3 @@
+-  SlowBuffer.prototype.equal = origSlowBufEqual;
++  if (typeof SlowBuffer !== "undefined") {
++    SlowBuffer.prototype.equal = origSlowBufEqual;
++  }
