@@ -25,18 +25,33 @@ export class LoginPage {
     this.passwordHelperText = page.locator('#password-helper-text');
   }
 
-  async login(username: string, password: string, remember = false): Promise<HomePage> {
+  async fillUsername(username: string): Promise<void> {
     await this.usernameInput.fill(username);
+  }
+
+  async fillPassword(password: string): Promise<void> {
     await this.passwordInput.fill(password);
-    if (remember) {
-      await this.rememberMeCheckbox.check();
-    }
+  }
+
+  async toggleRememberMe(): Promise<void> {
+    await this.rememberMeCheckbox.check();
+  }
+
+  async clickSubmit(): Promise<HomePage> {
     await this.submitButton.click();
     return new HomePage(this.page);
   }
 
+  async login(username: string, password: string, remember = false): Promise<HomePage> {
+    await this.fillUsername(username);
+    await this.fillPassword(password);
+    if (remember) {
+      await this.toggleRememberMe();
+    }
+    return await this.clickSubmit();
+  }
+
   async navigateToSignup(): Promise<SignupPage> {
-    // The signup link is sometimes an 'a' tag inside the data-test element
     await this.signupLink.click({ force: true });
     return new SignupPage(this.page);
   }

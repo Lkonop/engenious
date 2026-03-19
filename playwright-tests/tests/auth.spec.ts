@@ -4,6 +4,7 @@ import { HomePage } from '../pages/home.page';
 import { SignupPage } from '../pages/signup.page';
 import { NavComponent } from '../pages/nav.component';
 import { DbUtils } from '../utils/db-utils';
+import { userPassword } from '../test-data/user-data';
 
 test.describe('Authentication tests', () => {
   let loginPage: LoginPage;
@@ -37,7 +38,7 @@ test.describe('Authentication tests', () => {
 
     await test.step('Login with valid credentials', async () => {
       await page.goto('/signin');
-      await loginPage.login(user.username, 's3cret');
+      await loginPage.login(user.username, userPassword);
     });
 
     await test.step('Verify redirect to home page', async () => {
@@ -52,7 +53,7 @@ test.describe('Authentication tests', () => {
 
     await test.step('Login with "Remember me" checked', async () => {
       await page.goto('/signin');
-      await loginPage.login(user.username, 's3cret', true);
+      await loginPage.login(user.username, userPassword, true);
     });
 
     await test.step('Verify session persistence after reload', async () => {
@@ -71,7 +72,7 @@ test.describe('Authentication tests', () => {
       firstName: 'Bob',
       lastName: 'Ross',
       username: `Painter_${Date.now()}`, // Unique username for stability
-      password: 's3cret',
+      password: userPassword,
     };
 
     await test.step('Navigate to Signup and fill form', async () => {

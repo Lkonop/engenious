@@ -35,13 +35,37 @@ export class SignupPage {
     this.confirmPasswordHelper = page.locator('#confirmPassword-helper-text');
   }
 
-  async signup(user: any): Promise<LoginPage> {
-    await this.firstNameInput.fill(user.firstName);
-    await this.lastNameInput.fill(user.lastName);
-    await this.usernameInput.fill(user.username);
-    await this.passwordInput.fill(user.password);
-    await this.confirmPasswordInput.fill(user.password);
+  async fillFirstName(firstName: string): Promise<void> {
+    await this.firstNameInput.fill(firstName);
+  }
+
+  async fillLastName(lastName: string): Promise<void> {
+    await this.lastNameInput.fill(lastName);
+  }
+
+  async fillUsername(username: string): Promise<void> {
+    await this.usernameInput.fill(username);
+  }
+
+  async fillPassword(password: string): Promise<void> {
+    await this.passwordInput.fill(password);
+  }
+
+  async fillConfirmPassword(password: string): Promise<void> {
+    await this.confirmPasswordInput.fill(password);
+  }
+
+  async clickSubmit(): Promise<LoginPage> {
     await this.submitButton.click();
     return new LoginPage(this.page);
+  }
+
+  async signup(user: any): Promise<LoginPage> {
+    await this.fillFirstName(user.firstName);
+    await this.fillLastName(user.lastName);
+    await this.fillUsername(user.username);
+    await this.fillPassword(user.password);
+    await this.fillConfirmPassword(user.password);
+    return await this.clickSubmit();
   }
 }

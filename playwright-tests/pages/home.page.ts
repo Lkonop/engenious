@@ -15,7 +15,6 @@ export class HomePage {
     this.page = page;
     this.onboardingDialog = page.locator('[data-test="user-onboarding-dialog"]');
     this.onboardingNextButton = page.locator('[data-test="user-onboarding-next"]');
-    // Using *= as per Cypress getBySelLike patterns
     this.bankNameInput = page.locator('[data-test*="bankName-input"] input');
     this.accountNumberInput = page.locator('[data-test*="accountNumber-input"] input');
     this.routingNumberInput = page.locator('[data-test*="routingNumber-input"] input');
@@ -24,13 +23,24 @@ export class HomePage {
     this.listSkeleton = page.locator('[data-test="list-skeleton"]');
   }
 
-  async completeOnboarding(bankName: string, accountNumber: string, routingNumber: string): Promise<void> {
+  async startOnboarding(): Promise<void> {
     await this.onboardingNextButton.click();
+  }
+
+  async fillBankAccountForm(bankName: string, accountNumber: string, routingNumber: string): Promise<void> {
     await this.bankNameInput.fill(bankName);
     await this.accountNumberInput.fill(accountNumber);
     await this.routingNumberInput.fill(routingNumber);
+  }
+
+  async submitBankAccountForm(): Promise<void> {
     await this.onboardingSubmitButton.click();
-    // Final step 'Finished'
+  }
+
+  async completeOnboarding(bankName: string, accountNumber: string, routingNumber: string): Promise<void> {
+    await this.startOnboarding();
+    await this.fillBankAccountForm(bankName, accountNumber, routingNumber);
+    await this.submitBankAccountForm();
     await this.onboardingNextButton.click();
   }
 }
