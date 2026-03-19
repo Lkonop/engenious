@@ -30,3 +30,7 @@ This document outlines the key architectural and technical changes made during t
 ## 7. Granular POM Methods (Atomicity)
 - **Change:** Refactored complex methods like `completeOnboarding` into smaller, atomic actions (`startOnboarding`, `fillBankAccountForm`, `submitBankAccountForm`).
 - **Reasoning:** Breaking down large procedures into smaller methods increases the reusability of the Page Object. It allows for more specific testing scenarios (e.g., verifying form validation error states) without having to execute the entire onboarding flow. This follows the Single Responsibility Principle within the Page Object context.
+
+## 8. Enhanced Reporting with Native Steps
+- **Change:** Implemented Playwright's native `test.step` to wrap logical blocks of actions and assertions.
+- **Reasoning:** Standard Cypress does not have a native equivalent for grouping commands into descriptive steps. By using `test.step`, we create a self-documenting test suite where the execution flow is clearly visible in HTML and Allure reports. This significantly improves debuggability and makes the tests easier to understand for non-technical stakeholders.
