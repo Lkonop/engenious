@@ -4,7 +4,8 @@ import { HomePage } from '../pages/home.page';
 import { SignupPage } from '../pages/signup.page';
 import { NavComponent } from '../pages/nav.component';
 import { DbUtils } from '../utils/db-utils';
-import { userPassword } from '../test-data/user-data';
+import { userPassword, getRandomUser, defaultBankData } from '../test-data/user-data';
+import { urls } from '../test-data/urls';
 
 test.describe('Authentication tests', () => {
   let loginPage: LoginPage;
@@ -24,11 +25,11 @@ test.describe('Authentication tests', () => {
 
   test('should redirect unauthenticated user to signin page', async ({ page }) => {
     await test.step('Navigate to personal transactions', async () => {
-      await page.goto('/personal');
+      await page.goto(urls.personal);
     });
 
     await test.step('Verify redirect to signin page', async () => {
-      await expect(page).toHaveURL('/signin');
+      await expect(page).toHaveURL(urls.signin);
     });
   });
 
@@ -37,12 +38,12 @@ test.describe('Authentication tests', () => {
     const user = await DbUtils.findUser({});
 
     await test.step('Login with valid credentials', async () => {
-      await page.goto('/signin');
+      await page.goto(urls.signin);
       await loginPage.login(user.username, userPassword);
     });
 
     await test.step('Verify redirect to home page', async () => {
-      await expect(page).toHaveURL('/');
+      await expect(page).toHaveURL(urls.home);
       await expect(nav.usernameLabel).toBeVisible();
       await expect(homePage.transactionList).toBeVisible();
     });
@@ -52,7 +53,7 @@ test.describe('Authentication tests', () => {
     const user = await DbUtils.findUser({});
 
     await test.step('Login with "Remember me" checked', async () => {
-      await page.goto('/signin');
+      await page.goto(urls.signin);
       await loginPage.login(user.username, userPassword, true);
     });
 
@@ -63,44 +64,43 @@ test.describe('Authentication tests', () => {
 
     await test.step('Logout and verify redirection', async () => {
       await nav.logout();
-      await expect(page).toHaveURL('/signin');
+      await expect(page).toHaveURL(urls.signin);
     });
   });
 
   test('should allow a visitor to sign-up, login, and logout', async ({ page }) => {
-    const userInfo = {
-      firstName: 'Bob',
-      lastName: 'Ross',
-      username: `Painter_${Date.now()}`, // Unique username for stability
-      password: userPassword,
-    };
+    const userInfo = getRandomUser();
 
     await test.step('Navigate to Signup and fill form', async () => {
-      await page.goto('/signup');
+      await page.goto(urls.signup);
       await expect(signupPage.title).toBeVisible();
       await signupPage.signup(userInfo);
     });
 
     await test.step('Login with new user', async () => {
-      await expect(page).toHaveURL('/signin');
+      await expect(page).toHaveURL(urls.signin);
       await loginPage.login(userInfo.username, userInfo.password);
     });
 
     await test.step('Complete onboarding flow', async () => {
       await expect(homePage.onboardingDialog).toBeVisible();
-      await homePage.completeOnboarding('The Best Bank', '123456789', '987654321');
+      await homePage.completeOnboarding(
+        defaultBankData.name, 
+        defaultBankData.accountNumber, 
+        defaultBankData.routingNumber
+      );
     });
 
     await test.step('Verify app state and logout', async () => {
       await expect(homePage.transactionList).toBeVisible();
       await nav.logout();
-      await expect(page).toHaveURL('/signin');
+      await expect(page).toHaveURL(urls.signin);
     });
   });
 
   test('should display login errors', async ({ page }) => {
     await test.step('Navigate to signin', async () => {
-      await page.goto('/signin');
+      await page.goto(urls.signin);
     });
 
     await test.step('Trigger "Username is required" error', async () => {
@@ -125,7 +125,7 @@ test.describe('Authentication tests', () => {
 
   test('should display signup errors', async ({ page }) => {
     await test.step('Navigate to signup', async () => {
-      await page.goto('/signup');
+      await page.goto(urls.signup);
     });
 
     await test.step('Verify required field errors', async () => {
@@ -160,7 +160,7 @@ test.describe('Authentication tests', () => {
 
   test('should error for an invalid user', async ({ page }) => {
     await test.step('Attempt login with invalid user', async () => {
-      await page.goto('/signin');
+      await page.goto(urls.signin);
       await loginPage.login('invalidUserName', 'invalidPa$$word');
     });
 
@@ -174,7 +174,7 @@ test.describe('Authentication tests', () => {
     const user = await DbUtils.findUser({});
 
     await test.step('Attempt login with invalid password', async () => {
-      await page.goto('/signin');
+      await page.goto(urls.signin);
       await loginPage.login(user.username, 'INVALID');
     });
 

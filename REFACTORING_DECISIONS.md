@@ -7,11 +7,15 @@ This document outlines the key architectural and technical changes made during t
 - **Reasoning:** Partial matches (`*=`) are more prone to "false positives". However, we discovered that for certain Material-UI components (like Bank Account inputs), partial matches are necessary because the framework appends dynamic suffixes to the `data-test` attributes. 
 - **Outcome:** We used exact matches for stable identifiers and kept partial matches for decorated components, striking a balance between precision and reliability.
 
-## 2. Externalized Test Data
-- **Change:** Moved hardcoded strings (passwords, user info) from test files to `playwright-tests/test-data/`.
-- **Reasoning:** Centralizing test data follows the DRY (Don't Repeat Yourself) principle. It makes maintenance easier—if a default password changes, it only needs to be updated in one place rather than across multiple test files.
+## 2. Externalized and Dynamic Test Data
+- **Change:** Moved hardcoded strings (passwords, bank data) from test files to `playwright-tests/test-data/` and introduced `@faker-js/faker` for dynamic user generation.
+- **Reasoning:** Centralizing test data follows the DRY (Don't Repeat Yourself) principle. Using Faker ensures that each registration test uses unique data, preventing "data pollution" and potential collisions in the database, while making the tests more realistic.
 
-## 3. Behavioral Session Verification
+## 3. Centralized URL Management
+- **Change:** Moved hardcoded URL paths (e.g., `/signin`, `/signup`) to `playwright-tests/test-data/urls.ts`.
+- **Reasoning:** Hardcoded paths scattered throughout the test suite make it difficult to adapt to routing changes. Centralizing URLs ensures that a single update in the configuration file propagates across all tests, enhancing the maintainability of the project.
+
+## 4. Behavioral Session Verification
 - **Change:** Replaced direct cookie inspection (`connect.sid`) with a page reload verification.
 - **Reasoning:** In a modern web environment, especially on `localhost` with `HttpOnly` cookies, direct cookie access can be flaky. A behavioral test (logging in, reloading, and checking if still logged in) is a more reliable way to verify the user experience and the effective persistence of the session.
 
