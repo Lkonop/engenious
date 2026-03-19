@@ -6,6 +6,7 @@ import { NavComponent } from '../pages/nav.component';
 import { DbUtils } from '../utils/db-utils';
 import { userPassword, getRandomUser, defaultBankData } from '../test-data/user-data';
 import { urls } from '../test-data/urls';
+import { errorMessages } from '../test-data/messages';
 
 test.describe('Authentication tests', () => {
   let loginPage: LoginPage;
@@ -108,14 +109,14 @@ test.describe('Authentication tests', () => {
       await loginPage.usernameInput.clear();
       await loginPage.usernameInput.blur();
       await expect(loginPage.usernameHelperText).toBeVisible();
-      await expect(loginPage.usernameHelperText).toContainText('Username is required');
+      await expect(loginPage.usernameHelperText).toContainText(errorMessages.usernameRequired);
     });
 
     await test.step('Trigger "Password must contain at least 4 characters" error', async () => {
       await loginPage.passwordInput.fill('abc');
       await loginPage.passwordInput.blur();
       await expect(loginPage.passwordHelperText).toBeVisible();
-      await expect(loginPage.passwordHelperText).toContainText('Password must contain at least 4 characters');
+      await expect(loginPage.passwordHelperText).toContainText(errorMessages.passwordTooShort);
     });
 
     await test.step('Verify submit button is disabled', async () => {
@@ -130,10 +131,10 @@ test.describe('Authentication tests', () => {
 
     await test.step('Verify required field errors', async () => {
       const inputs = [
-        { loc: signupPage.firstNameInput, helper: signupPage.firstNameHelper, text: 'First Name is required' },
-        { loc: signupPage.lastNameInput, helper: signupPage.lastNameHelper, text: 'Last Name is required' },
-        { loc: signupPage.usernameInput, helper: signupPage.usernameHelper, text: 'Username is required' },
-        { loc: signupPage.passwordInput, helper: signupPage.passwordHelper, text: 'Enter your password' },
+        { loc: signupPage.firstNameInput, helper: signupPage.firstNameHelper, text: errorMessages.firstNameRequired },
+        { loc: signupPage.lastNameInput, helper: signupPage.lastNameHelper, text: errorMessages.lastNameRequired },
+        { loc: signupPage.usernameInput, helper: signupPage.usernameHelper, text: errorMessages.usernameRequired },
+        { loc: signupPage.passwordInput, helper: signupPage.passwordHelper, text: errorMessages.passwordRequired },
       ];
 
       for (const item of inputs) {
@@ -150,7 +151,7 @@ test.describe('Authentication tests', () => {
       await signupPage.confirmPasswordInput.fill('DIFFERENT');
       await signupPage.confirmPasswordInput.blur();
       await expect(signupPage.confirmPasswordHelper).toBeVisible();
-      await expect(signupPage.confirmPasswordHelper).toContainText('Password does not match');
+      await expect(signupPage.confirmPasswordHelper).toContainText(errorMessages.passwordsDoNotMatch);
     });
 
     await test.step('Verify signup button is disabled', async () => {
@@ -166,7 +167,7 @@ test.describe('Authentication tests', () => {
 
     await test.step('Verify error message', async () => {
       await expect(loginPage.loginError).toBeVisible();
-      await expect(loginPage.loginError).toHaveText('Username or password is invalid');
+      await expect(loginPage.loginError).toHaveText(errorMessages.invalidCredentials);
     });
   });
 
@@ -180,7 +181,7 @@ test.describe('Authentication tests', () => {
 
     await test.step('Verify error message', async () => {
       await expect(loginPage.loginError).toBeVisible();
-      await expect(loginPage.loginError).toHaveText('Username or password is invalid');
+      await expect(loginPage.loginError).toHaveText(errorMessages.invalidCredentials);
     });
   });
 });
