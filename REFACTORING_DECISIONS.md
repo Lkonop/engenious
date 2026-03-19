@@ -42,6 +42,10 @@ This document outlines the key architectural and technical changes made during t
   - **Lazy Initialization:** Fixtures are only created when a test actually uses them.
   - **Encapsulated Setup:** Global setup logic is hidden within the fixture, making the test files focus strictly on business logic. This is the industry-standard approach for scalable Playwright projects.
 
-## 10. Guaranteed Isolation with Auto-Fixtures
+## 10. Automated Navigation via Fixtures
+- **Change:** Integrated `page.goto()` calls into the Page Object fixtures (e.g., the `loginPage` fixture automatically calls `loginPage.open()`).
+- **Reasoning:** This further reduces boilerplate in the test files. Each test remains declarative—by simply requesting a Page Object, the environment is automatically navigated to the correct state. This ensures that tests are always in sync with their required entry points without manual repetition of navigation logic.
+
+## 11. Guaranteed Isolation with Auto-Fixtures
 - **Change:** Implemented an automatic fixture (`dbSeed: [..., { auto: true }]`) to handle database seeding.
 - **Reasoning:** By making the seeding process automatic, we ensure that every single test—even those not directly interacting with Page Objects—starts with a pristine database state. This eliminates flaky tests caused by data pollution and guarantees total isolation between test runs without manual boilerplate in each test.

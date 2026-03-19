@@ -1,5 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 import { LoginPage } from './login.page';
+import { urls } from '../test-data/urls';
 
 export class SignupPage {
   readonly page: Page;
@@ -33,6 +34,10 @@ export class SignupPage {
     this.usernameHelper = page.locator('#username-helper-text');
     this.passwordHelper = page.locator('#password-helper-text');
     this.confirmPasswordHelper = page.locator('#confirmPassword-helper-text');
+  }
+
+  async open(): Promise<void> {
+    await this.page.goto(urls.signup);
   }
 
   async fillFirstName(firstName: string): Promise<void> {

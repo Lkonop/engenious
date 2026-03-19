@@ -22,6 +22,7 @@ export const test = base.extend<MyFixtures>({
 
   loginPage: async ({ page }, use) => {
     const loginPage = new LoginPage(page);
+    await loginPage.open(); // Automated navigation
     await use(loginPage);
   },
   homePage: async ({ page }, use) => {
@@ -30,6 +31,7 @@ export const test = base.extend<MyFixtures>({
   },
   signupPage: async ({ page }, use) => {
     const signupPage = new SignupPage(page);
+    await signupPage.open(); // Automated navigation
     await use(signupPage);
   },
   nav: async ({ page }, use) => {

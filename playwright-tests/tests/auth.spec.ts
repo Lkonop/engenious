@@ -16,11 +16,10 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should redirect to the home page after login', async ({ page, loginPage, nav, homePage }) => {
+  test('should redirect to the home page after login', async ({ loginPage, nav, homePage, page }) => {
     const user = await DbUtils.findUser({});
 
     await test.step('Login with valid credentials', async () => {
-      await page.goto(urls.signin);
       await loginPage.login(user.username, userPassword);
     });
 
@@ -31,11 +30,10 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should remember a user for 30 days after login', async ({ page, loginPage, nav }) => {
+  test('should remember a user for 30 days after login', async ({ loginPage, nav, page }) => {
     const user = await DbUtils.findUser({});
 
     await test.step('Login with "Remember me" checked', async () => {
-      await page.goto(urls.signin);
       await loginPage.login(user.username, userPassword, true);
     });
 
@@ -50,11 +48,10 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should allow a visitor to sign-up, login, and logout', async ({ page, loginPage, signupPage, homePage, nav }) => {
+  test('should allow a visitor to sign-up, login, and logout', async ({ signupPage, loginPage, homePage, nav, page }) => {
     const userInfo = getRandomUser();
 
-    await test.step('Navigate to Signup and fill form', async () => {
-      await page.goto(urls.signup);
+    await test.step('Fill and submit signup form', async () => {
       await expect(signupPage.title).toBeVisible();
       await signupPage.signup(userInfo);
     });
@@ -80,11 +77,7 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should display login errors', async ({ page, loginPage }) => {
-    await test.step('Navigate to signin', async () => {
-      await page.goto(urls.signin);
-    });
-
+  test('should display login errors', async ({ loginPage }) => {
     await test.step('Trigger "Username is required" error', async () => {
       await loginPage.usernameInput.fill('User');
       await loginPage.usernameInput.clear();
@@ -105,11 +98,7 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should display signup errors', async ({ page, signupPage }) => {
-    await test.step('Navigate to signup', async () => {
-      await page.goto(urls.signup);
-    });
-
+  test('should display signup errors', async ({ signupPage }) => {
     await test.step('Verify required field errors', async () => {
       const inputs = [
         { loc: signupPage.firstNameInput, helper: signupPage.firstNameHelper, text: errorMessages.firstNameRequired },
@@ -140,9 +129,8 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should error for an invalid user', async ({ page, loginPage }) => {
+  test('should error for an invalid user', async ({ loginPage }) => {
     await test.step('Attempt login with invalid user', async () => {
-      await page.goto(urls.signin);
       await loginPage.login('invalidUserName', 'invalidPa$$word');
     });
 
@@ -152,11 +140,10 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should error for an invalid password for existing user', async ({ page, loginPage }) => {
+  test('should error for an invalid password for existing user', async ({ loginPage }) => {
     const user = await DbUtils.findUser({});
 
     await test.step('Attempt login with invalid password', async () => {
-      await page.goto(urls.signin);
       await loginPage.login(user.username, 'INVALID');
     });
 
