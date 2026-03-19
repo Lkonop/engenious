@@ -34,3 +34,14 @@ This document outlines the key architectural and technical changes made during t
 ## 8. Enhanced Reporting with Native Steps
 - **Change:** Implemented Playwright's native `test.step` to wrap logical blocks of actions and assertions.
 - **Reasoning:** Standard Cypress does not have a native equivalent for grouping commands into descriptive steps. By using `test.step`, we create a self-documenting test suite where the execution flow is clearly visible in HTML and Allure reports. This significantly improves debuggability and makes the tests easier to understand for non-technical stakeholders.
+
+## 9. Dependency Injection with Playwright Fixtures
+- **Change:** Migrated from manual Page Object initialization in `beforeEach` hooks to Playwright Fixtures (`playwright-tests/fixtures/pom.fixture.ts`).
+- **Reasoning:** Fixtures implement the Dependency Injection pattern. Instead of every test manually setting up its environment, it simply "requests" the necessary Page Objects. This leads to:
+  - **Zero-Boilerplate Tests:** No need for `beforeEach` or local variables in every test file.
+  - **Lazy Initialization:** Fixtures are only created when a test actually uses them.
+  - **Encapsulated Setup:** Global setup logic is hidden within the fixture, making the test files focus strictly on business logic. This is the industry-standard approach for scalable Playwright projects.
+
+## 10. Guaranteed Isolation with Auto-Fixtures
+- **Change:** Implemented an automatic fixture (`dbSeed: [..., { auto: true }]`) to handle database seeding.
+- **Reasoning:** By making the seeding process automatic, we ensure that every single test—even those not directly interacting with Page Objects—starts with a pristine database state. This eliminates flaky tests caused by data pollution and guarantees total isolation between test runs without manual boilerplate in each test.

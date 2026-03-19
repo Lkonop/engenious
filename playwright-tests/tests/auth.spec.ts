@@ -1,28 +1,10 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { HomePage } from '../pages/home.page';
-import { SignupPage } from '../pages/signup.page';
-import { NavComponent } from '../pages/nav.component';
+import { test, expect } from '../fixtures/pom.fixture';
 import { DbUtils } from '../utils/db-utils';
 import { userPassword, getRandomUser, defaultBankData } from '../test-data/user-data';
 import { urls } from '../test-data/urls';
 import { errorMessages } from '../test-data/messages';
 
 test.describe('Authentication tests', () => {
-  let loginPage: LoginPage;
-  let homePage: HomePage;
-  let signupPage: SignupPage;
-  let nav: NavComponent;
-
-  test.beforeEach(async ({ page }) => {
-    await test.step('Seed database', async () => {
-      await DbUtils.seed();
-      loginPage = new LoginPage(page);
-      homePage = new HomePage(page);
-      signupPage = new SignupPage(page);
-      nav = new NavComponent(page);
-    });
-  });
 
   test('should redirect unauthenticated user to signin page', async ({ page }) => {
     await test.step('Navigate to personal transactions', async () => {
@@ -34,8 +16,7 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should redirect to the home page after login', async ({ page }) => {
-    // Fetch any user from the seeded DB to avoid issues with random faker data
+  test('should redirect to the home page after login', async ({ page, loginPage, nav, homePage }) => {
     const user = await DbUtils.findUser({});
 
     await test.step('Login with valid credentials', async () => {
@@ -50,7 +31,7 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should remember a user for 30 days after login', async ({ page }) => {
+  test('should remember a user for 30 days after login', async ({ page, loginPage, nav }) => {
     const user = await DbUtils.findUser({});
 
     await test.step('Login with "Remember me" checked', async () => {
@@ -69,7 +50,7 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should allow a visitor to sign-up, login, and logout', async ({ page }) => {
+  test('should allow a visitor to sign-up, login, and logout', async ({ page, loginPage, signupPage, homePage, nav }) => {
     const userInfo = getRandomUser();
 
     await test.step('Navigate to Signup and fill form', async () => {
@@ -99,7 +80,7 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should display login errors', async ({ page }) => {
+  test('should display login errors', async ({ page, loginPage }) => {
     await test.step('Navigate to signin', async () => {
       await page.goto(urls.signin);
     });
@@ -124,7 +105,7 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should display signup errors', async ({ page }) => {
+  test('should display signup errors', async ({ page, signupPage }) => {
     await test.step('Navigate to signup', async () => {
       await page.goto(urls.signup);
     });
@@ -159,7 +140,7 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should error for an invalid user', async ({ page }) => {
+  test('should error for an invalid user', async ({ page, loginPage }) => {
     await test.step('Attempt login with invalid user', async () => {
       await page.goto(urls.signin);
       await loginPage.login('invalidUserName', 'invalidPa$$word');
@@ -171,7 +152,7 @@ test.describe('Authentication tests', () => {
     });
   });
 
-  test('should error for an invalid password for existing user', async ({ page }) => {
+  test('should error for an invalid password for existing user', async ({ page, loginPage }) => {
     const user = await DbUtils.findUser({});
 
     await test.step('Attempt login with invalid password', async () => {
